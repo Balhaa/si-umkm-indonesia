@@ -26,13 +26,13 @@ export default function Tentang() {
       description: "Spesialis manajemen bisnis dan pengembangan program pelatihan",
     },
     {
-      name: "Safira Habibah",
+      name: "habibah",
       position: "Kepala Digital",
       image: "https://static.vecteezy.com/system/resources/previews/018/765/757/non_2x/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
       description: "Expert digital marketing dengan fokus pada transformasi digital UMKM",
     },
     {
-      name: "Safira Habibah",
+      name: "Habibah",
       position: "Kepala Kemitraan",
       image: "https://static.vecteezy.com/system/resources/previews/018/765/757/non_2x/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg",
       description: "Membangun jaringan kemitraan strategis untuk mendukung ekosistem UMKM",
