@@ -13,9 +13,9 @@ interface BerandaProps {
 
 export default function Beranda({ onLoginClick, onRegisterClick, isLoggedIn = false }: BerandaProps) {
   const stats = [
-    { label: "UMKM Terdaftar", value: "2,500+", icon: Users },
-    { label: "Produk Terdaftar", value: "15,000+", icon: TrendingUp },
-    { label: "Program Pelatihan", value: "50+", icon: Award },
+    { label: "UMKM Terdaftar", value: "100+", icon: Users },
+    { label: "Produk Terdaftar", value: "10+", icon: TrendingUp },
+    { label: "Program Pelatihan", value: "6+", icon: Award },
   ]
 
   const features = [

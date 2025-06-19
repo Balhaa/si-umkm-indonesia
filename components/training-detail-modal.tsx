@@ -117,7 +117,7 @@ export default function TrainingDetailModal({ program, isOpen, onClose, user }: 
     },
   ]
 
-  // Mock instructor details
+  // detail instructor pelatihan
   const instructorDetails = {
     bio: "Praktisi berpengalaman dengan 10+ tahun di bidang digital marketing dan pengembangan UMKM",
     experience: "10+ tahun",

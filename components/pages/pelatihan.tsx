@@ -104,7 +104,7 @@ export default function Pelatihan({ user }: PelatihanProps) {
       price: "Gratis",
       category: "digital",
       level: "Pemula",
-      image: "E-commerce & Marketplace untuk UMKM",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuYzQm4mxNlJUF6Z7qR3jNkSuUf1A-68Ez7Q&s",
       status: "Pendaftaran Dibuka",
       features: ["Setup Toko Online", "Optimasi Produk", "Customer Service", "Logistik & Pengiriman"],
     },

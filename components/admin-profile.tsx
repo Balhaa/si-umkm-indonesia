@@ -178,29 +178,6 @@ export default function AdminProfile({ user, onSignOut }: AdminProfileProps) {
         </CardContent>
       </Card>
 
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Aksi Cepat</CardTitle>
-          <CardDescription>Shortcut untuk tugas administrasi umum</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="h-20 flex-col">
-              <Users className="h-6 w-6 mb-2" />
-              Kelola Pengguna
-            </Button>
-            <Button variant="outline" className="h-20 flex-col">
-              <ShoppingBag className="h-6 w-6 mb-2" />
-              Moderasi Produk
-            </Button>
-            <Button variant="outline" className="h-20 flex-col">
-              <BarChart3 className="h-6 w-6 mb-2" />
-              Lihat Laporan
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }
