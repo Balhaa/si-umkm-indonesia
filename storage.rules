@@ -1,0 +1,171 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return request.auth != null && 
+             firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid));
+    }
+    
+    function isValidImageFile() {
+      return request.resource.contentType.matches('image/.*') &&
+             request.resource.size < 10 * 1024 * 1024; // 10MB limit
+    }
+    
+    function isValidDocumentFile() {
+      return request.resource.contentType in [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'text/plain'
+      ] && request.resource.size < 50 * 1024 * 1024; // 50MB limit
+    }
+    
+    function isValidVideoFile() {
+      return request.resource.contentType.matches('video/.*') &&
+             request.resource.size < 100 * 1024 * 1024; // 100MB limit
+    }
+    
+    function isValidAudioFile() {
+      return request.resource.contentType.matches('audio/.*') &&
+             request.resource.size < 25 * 1024 * 1024; // 25MB limit
+    }
+    
+    // Public files (readable by anyone, writable by authenticated users)
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && 
+                      (isValidImageFile() || isValidDocumentFile());
+    }
+    
+    // User profile images
+    match /users/{userId}/profile/{fileName} {
+      allow read: if true; // Profile images are public
+      allow write: if isAuthenticated() && 
+                      isOwner(userId) && 
+                      isValidImageFile();
+      allow delete: if isAuthenticated() && 
+                       (isOwner(userId) || isAdmin());
+    }
+    
+    // User's private files
+    match /users/{userId}/private/{allPaths=**} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+      allow delete: if isAuthenticated() && 
+                       (isOwner(userId) || isAdmin());
+    }
+    
+    // User's documents
+    match /users/{userId}/documents/{fileName} {
+      allow read, write: if isAuthenticated() && 
+                            isOwner(userId) && 
+                            isValidDocumentFile();
+      allow delete: if isAuthenticated() && 
+                       (isOwner(userId) || isAdmin());
+    }
+    
+    // User's media files
+    match /users/{userId}/media/images/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+                      isOwner(userId) && 
+                      isValidImageFile();
+      allow delete: if isAuthenticated() && 
+                       (isOwner(userId) || isAdmin());
+    }
+    
+    match /users/{userId}/media/videos/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+                      isOwner(userId) && 
+                      isValidVideoFile();
+      allow delete: if isAuthenticated() && 
+                       (isOwner(userId) || isAdmin());
+    }
+    
+    match /users/{userId}/media/audio/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+                      isOwner(userId) && 
+                      isValidAudioFile();
+      allow delete: if isAuthenticated() && 
+                       (isOwner(userId) || isAdmin());
+    }
+    
+    // Organization files
+    match /organizations/{orgId}/{allPaths=**} {
+      allow read: if isAuthenticated() && 
+                     request.auth.uid in firestore.get(/databases/(default)/documents/organizations/$(orgId)).data.members;
+      allow write: if isAuthenticated() && 
+                      (request.auth.uid in firestore.get(/databases/(default)/documents/organizations/$(orgId)).data.admins ||
+                       request.auth.uid == firestore.get(/databases/(default)/documents/organizations/$(orgId)).data.ownerId);
+      allow delete: if isAuthenticated() && 
+                       (request.auth.uid in firestore.get(/databases/(default)/documents/organizations/$(orgId)).data.admins ||
+                        request.auth.uid == firestore.get(/databases/(default)/documents/organizations/$(orgId)).data.ownerId ||
+                        isAdmin());
+    }
+    
+    // Post attachments (linked to posts in Firestore)
+    match /posts/{postId}/attachments/{fileName} {
+      allow read: if true; // Public posts have public attachments
+      allow write: if isAuthenticated() && 
+                      request.auth.uid == firestore.get(/databases/(default)/documents/posts/$(postId)).data.authorId &&
+                      (isValidImageFile() || isValidDocumentFile());
+      allow delete: if isAuthenticated() && 
+                       (request.auth.uid == firestore.get(/databases/(default)/documents/posts/$(postId)).data.authorId ||
+                        isAdmin());
+    }
+    
+    // Private post attachments
+    match /private_posts/{postId}/attachments/{fileName} {
+      allow read, write: if isAuthenticated() && 
+                            request.auth.uid == firestore.get(/databases/(default)/documents/private_posts/$(postId)).data.authorId;
+      allow delete: if isAuthenticated() && 
+                       (request.auth.uid == firestore.get(/databases/(default)/documents/private_posts/$(postId)).data.authorId ||
+                        isAdmin());
+    }
+    
+    // Chat attachments
+    match /chats/{chatId}/attachments/{fileName} {
+      allow read, write: if isAuthenticated() && 
+                            request.auth.uid in firestore.get(/databases/(default)/documents/chats/$(chatId)).data.participants &&
+                            (isValidImageFile() || isValidDocumentFile() || isValidAudioFile());
+      allow delete: if isAuthenticated() && 
+                       (request.auth.uid in firestore.get(/databases/(default)/documents/chats/$(chatId)).data.participants ||
+                        isAdmin());
+    }
+    
+    // Temporary uploads (auto-expire after 1 hour)
+    match /temp/{userId}/{fileName} {
+      allow read, write: if isAuthenticated() && 
+                            isOwner(userId) && 
+                            request.time < resource.timeCreated + duration.value(1, 'h');
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Admin-only files
+    match /admin/{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // System backups and logs
+    match /system/{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Default deny rule
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
