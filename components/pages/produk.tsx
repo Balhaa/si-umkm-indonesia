@@ -93,6 +93,19 @@ export default function Produk({ user }: ProdukProps) {
       reviews: 67,
       badge: "Premium",
     },
+    {
+      id: "default-4",
+      name: "Teh Hijau Organik",
+      description: "teh hijau organik dari perkebunan lokal, kaya antioksidan dan rasa segar",
+      price: "Rp 350.000",
+      image: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.alodokter.com%2Fmemetik-manfaat-teh-hijau-untuk-kesehatan&psig=AOvVaw2NQ6IedXE1D6PR8TAjRXPz&ust=1752763557055000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCMCcj5zPwY4DFQAAAAAdAAAAABAE",
+      category: "minuman",
+      seller: "UMKM Teh Sehat Gunungsari",
+      location: "Pemalang, Jawa Tengah",
+      rating: 5.0,
+      reviews: 10,
+      badge: "Premium",
+    },
   ]
 
   useEffect(() => {

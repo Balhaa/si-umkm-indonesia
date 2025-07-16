@@ -6,8 +6,8 @@ import { Target, Eye, Heart, Users, Award, TrendingUp, CheckCircle } from "lucid
 
 export default function Tentang() {
   const stats = [
-    { label: "UMKM Terdaftar", value: "2,500+", icon: Users },
-    { label: "Program Pelatihan", value: "50+", icon: Award },
+    { label: "UMKM Terdaftar", value: "10+", icon: Users },
+    { label: "Program Pelatihan", value: "5", icon: Award },
     { label: "Tingkat Kepuasan", value: "95%", icon: TrendingUp },
     { label: "Kota Terjangkau", value: "100+", icon: Target },
   ]
